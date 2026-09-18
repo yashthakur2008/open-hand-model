@@ -13,23 +13,24 @@ import sys
 # importable even when the project itself has not been installed as a wheel.
 sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
-import cv2 as cv
-import numpy as np
 from flask import Flask, jsonify, request
-
-from open_hand_model import HandPoseModel
 
 app = Flask(__name__)
 
 
 @lru_cache(maxsize=1)
-def _model() -> HandPoseModel:
+def _model() -> Any:
     """Load the bundled model once per serverless instance."""
+    from open_hand_model import HandPoseModel
+
     return HandPoseModel()
 
 
 def _decode_image() -> np.ndarray:
     """Decode an uploaded image or a base64 JSON payload into BGR pixels."""
+    import cv2 as cv
+    import numpy as np
+
     payload = request.files.get("image")
     if payload is not None:
         encoded = payload.read()
