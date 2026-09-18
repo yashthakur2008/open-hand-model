@@ -21,3 +21,16 @@ jobs:
       - run: python -m pip install -e '.[test]'
       - run: python -m pytest -q
       - run: python -m compileall -q src examples tests
+      - run: test -z "$(git ls-files | grep -E '(^|/)\.?[A-Za-z0-9_-]+\.egg-info(/|$)' || true)"
+
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[test]'
+      - run: RUN_MODEL_SMOKE=1 python -m pytest -q tests/test_model_smoke.py

@@ -13,7 +13,7 @@ from .hand import MPHandPose
 from .palm import MPPalmDet
 
 
-_DEFAULT_MODEL_DIR = Path(__file__).resolve().parents[2] / "models"
+_DEFAULT_MODEL_DIR = Path(__file__).resolve().parent / "assets"
 
 
 @dataclass(frozen=True)
