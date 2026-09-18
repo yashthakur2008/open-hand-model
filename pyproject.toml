@@ -13,6 +13,7 @@ authors = [{ name = "Yash Thakur" }]
 dependencies = [
   "numpy>=1.24",
   "opencv-python>=4.10",
+  "flask>=3.0",
 ]
 
 [project.optional-dependencies]
@@ -23,6 +24,9 @@ open-hand-model = "open_hand_model.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.vercel]
+entrypoint = "app:app"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
