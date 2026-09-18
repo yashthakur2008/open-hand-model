@@ -5,7 +5,13 @@ from __future__ import annotations
 import base64
 import binascii
 from functools import lru_cache
+from pathlib import Path
 from typing import Any
+import sys
+
+# Vercel loads this root entrypoint directly. Make the src-layout package
+# importable even when the project itself has not been installed as a wheel.
+sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
 import cv2 as cv
 import numpy as np
