@@ -84,3 +84,20 @@ def test_detection_rejects_invalid_shapes_and_values():
         HandDetection([1, 2, 3, 4], zeros, zeros, 1.1, "Left")
     with pytest.raises(ValueError, match="handedness"):
         HandDetection([1, 2, 3, 4], zeros, zeros, 0.5, "Maybe")
+
+
+def test_detection_arrays_are_defensive_and_read_only():
+    bbox = [1, 2, 3, 4]
+    landmarks = np.zeros((21, 3))
+    world = np.zeros((21, 3))
+    detection = HandDetection(bbox, landmarks, world, 0.5, "Unknown")
+
+    assert not detection.bbox.flags.writeable
+    assert not detection.landmarks.flags.writeable
+    assert not detection.world_landmarks.flags.writeable
+    with pytest.raises(ValueError, match="read-only"):
+        detection.bbox[0] = 99
+    bbox[0] = 77
+    landmarks[0, 0] = 88
+    assert detection.bbox[0] == 1
+    assert detection.landmarks[0, 0] == 0
