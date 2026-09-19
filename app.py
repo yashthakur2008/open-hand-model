@@ -14,8 +14,12 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
 from flask import Flask, jsonify, request
+from werkzeug.exceptions import RequestEntityTooLarge
+
+MAX_UPLOAD_BYTES = 8 * 1024 * 1024
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_BYTES
 
 
 @lru_cache(maxsize=1)
@@ -50,6 +54,11 @@ def _decode_image() -> np.ndarray:
     if image is None:
         raise ValueError("image could not be decoded")
     return image
+
+
+@app.errorhandler(RequestEntityTooLarge)
+def request_too_large(_: RequestEntityTooLarge) -> tuple[Any, int]:
+    return jsonify({"error": f"request exceeds the {MAX_UPLOAD_BYTES // (1024 * 1024)} MiB limit"}), 413
 
 
 @app.get("/")
