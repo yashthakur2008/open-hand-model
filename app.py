@@ -18,6 +18,12 @@ from werkzeug.exceptions import RequestEntityTooLarge
 
 MAX_UPLOAD_BYTES = 8 * 1024 * 1024
 
+MODEL_ASSET_NAMES = (
+    "palm_detection_mediapipe_2023feb.onnx",
+    "handpose_estimation_mediapipe_2023feb.onnx",
+)
+BUNDLED_ASSET_DIR = Path(__file__).resolve().parent / "src" / "open_hand_model" / "assets"
+
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_BYTES
 
@@ -67,7 +73,12 @@ def index() -> Any:
         {
             "name": "open-hand-model",
             "status": "ok",
-            "endpoints": {"health": "/health", "metadata": "/metadata", "predict": "/predict"},
+            "endpoints": {
+                "health": "/health",
+                "ready": "/ready",
+                "metadata": "/metadata",
+                "predict": "/predict",
+            },
         }
     )
 
@@ -75,6 +86,16 @@ def index() -> Any:
 @app.get("/health")
 def health() -> Any:
     return jsonify({"status": "ok"})
+
+
+@app.get("/ready")
+def ready() -> Any:
+    missing = [
+        name for name in MODEL_ASSET_NAMES if not (BUNDLED_ASSET_DIR / name).is_file()
+    ]
+    if missing:
+        return jsonify({"status": "not_ready", "missing": missing}), 503
+    return jsonify({"status": "ready", "assets": list(MODEL_ASSET_NAMES)})
 
 
 @app.get("/metadata")
