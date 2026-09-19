@@ -57,8 +57,8 @@ curl -X POST -F image=@tests/fixtures/hand169.png \
 ```
 
 `/predict` accepts an image upload in the `image` form field or a JSON body with
-an `image` base64 string. The model is loaded lazily and cached per serverless
-instance.
+an `image` base64 string. Requests are limited to 8 MiB. The model is loaded
+lazily and cached per serverless instance.
 
 ## Tests
 
