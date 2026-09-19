@@ -51,10 +51,13 @@ Vercel detects it through the explicit `tool.vercel.entrypoint` setting in
 ```bash
 vercel deploy
 curl https://YOUR-DEPLOYMENT.vercel.app/health
+curl https://YOUR-DEPLOYMENT.vercel.app/ready
 curl https://YOUR-DEPLOYMENT.vercel.app/metadata
 curl -X POST -F image=@tests/fixtures/hand169.png \
   https://YOUR-DEPLOYMENT.vercel.app/predict
 ```
+
+`/ready` confirms that both bundled ONNX assets are available.
 
 `/predict` accepts an image upload in the `image` form field or a JSON body with
 an `image` base64 string. Requests are limited to 8 MiB. The model is loaded
