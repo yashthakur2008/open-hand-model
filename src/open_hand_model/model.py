@@ -27,9 +27,9 @@ class HandDetection:
     handedness: str
 
     def __post_init__(self) -> None:
-        bbox = np.asarray(self.bbox, dtype=np.float32)
-        landmarks = np.asarray(self.landmarks, dtype=np.float32)
-        world = np.asarray(self.world_landmarks, dtype=np.float32)
+        bbox = np.array(self.bbox, dtype=np.float32, copy=True)
+        landmarks = np.array(self.landmarks, dtype=np.float32, copy=True)
+        world = np.array(self.world_landmarks, dtype=np.float32, copy=True)
         if bbox.shape != (4,):
             raise ValueError(f"bbox must have shape (4,), got {bbox.shape}")
         if landmarks.shape != (21, 3):
@@ -41,6 +41,9 @@ class HandDetection:
             raise ValueError(f"confidence must be in [0, 1], got {confidence}")
         if self.handedness not in {"Left", "Right", "Unknown"}:
             raise ValueError(f"unsupported handedness: {self.handedness!r}")
+        bbox.setflags(write=False)
+        landmarks.setflags(write=False)
+        world.setflags(write=False)
         object.__setattr__(self, "bbox", bbox)
         object.__setattr__(self, "landmarks", landmarks)
         object.__setattr__(self, "world_landmarks", world)
